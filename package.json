@@ -6,11 +6,10 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "predeploy": "npx expo export --platform web && echo '!node_modules/' > dist/.gitignore && sed -i '' 's|src=\"/|src=\"/connor-yoked-tracker/|g;s|href=\"/|href=\"/connor-yoked-tracker/|g' dist/index.html && sed -i '' 's|\"/assets/|\"/connor-yoked-tracker/assets/|g' dist/_expo/static/js/web/*.js",
-    "deploy": "gh-pages -d dist --nojekyll --dotfiles --no-history"
+    "predeploy": "npx expo export --platform web",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
-    "@react-native-async-storage/async-storage": "1.21.0",
     "@expo-google-fonts/press-start-2p": "*",
     "@expo-google-fonts/special-elite": "*",
     "@expo/vector-icons": "^15.0.3",
