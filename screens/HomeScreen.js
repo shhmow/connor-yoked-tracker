@@ -114,7 +114,7 @@ export default function HomeScreen({
 
   const monthNames = [
     'January',
-    'bruh',
+    'Feburary',
     'March',
     'April',
     'May',
