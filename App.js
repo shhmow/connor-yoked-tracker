@@ -4,20 +4,10 @@ import { SafeAreaView, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-// Persistence helpers
-import { save, load } from './utils/storage';
-
 // Pixel font (tabs + big/bold)
-import {
-  useFonts as usePixel,
-  PressStart2P_400Regular,
-} from '@expo-google-fonts/press-start-2p';
-
+import { useFonts as usePixel, PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
 // Typewriter font (body/small)
-import {
-  useFonts as useType,
-  SpecialElite_400Regular,
-} from '@expo-google-fonts/special-elite';
+import { useFonts as useType, SpecialElite_400Regular } from '@expo-google-fonts/special-elite';
 
 import HomeScreen from './screens/HomeScreen';
 import MealsScreen from './screens/MealsScreen';
@@ -26,32 +16,16 @@ import WorkoutsScreen from './screens/WorkoutsScreen';
 const Tab = createBottomTabNavigator();
 
 export default function App() {
-  // ---- Load both fonts ----
   const [pixelLoaded] = usePixel({ PressStart2P_400Regular });
-  const [typeLoaded] = useType({ SpecialElite_400Regular });
+  const [typeLoaded]  = useType({ SpecialElite_400Regular });
+
+
+  // Wait for both fonts
   const fontsLoaded = pixelLoaded && typeLoaded;
-
-  // ---- App state (single source of truth) ----
-  // Provide reasonable defaults; they will be replaced by stored values on first effect run.
-  const [mealsData, setMealsData] = useState([
-    { name: 'protein shake', category: 'Breakfast', ingredients: ['protein shake', 'menthol breeze vape'], favorite: false },
-    { name: 'Honey Butter Bread', category: 'Lunch', ingredients: ['flour', 'yeast', 'salt', 'honey', 'butter'], favorite: false },
-    { name: 'boy chow', category: 'Dinner', ingredients: ['1 lb beef', 'onion', 'rice', 'franks red hot'], favorite: false },
-  ]);
-
-  const [workoutsData, setWorkoutsData] = useState([
-    { name: 'Chest Day', type: 'Chest', activities: ['incline bench', 'incline dumbbell press', 'dumbbell pull over'], favorite: false },
-  ]);
-
-  const [dayMeals, setDayMeals] = useState({});
-  const [dayWorkouts, setDayWorkouts] = useState({});
-  const [completedDays, setCompletedDays] = useState([]);
-  const [monthlyGoals, setMonthlyGoals] = useState({});
-
-  // ---- Apply default font to all <Text> once fonts are ready ----
   useEffect(() => {
     if (!fontsLoaded) return;
-
+    // Set a default for ALL <Text> = typewriter retro
+    // (You can still override with style={{ fontFamily: 'PressStart2P_400Regular' }} on big/bold items)
     if (Text && !Text.defaultProps) {
       Text.defaultProps = {};
     }
@@ -63,29 +37,21 @@ export default function App() {
     }
   }, [fontsLoaded]);
 
-  // ---- Load all persistent data on first app load (after fonts) ----
-  useEffect(() => {
-    if (!fontsLoaded) return;
-    (async () => {
-      // If nothing is stored yet, keep current defaults
-      setMealsData(await load('mealsData', mealsData));
-      setWorkoutsData(await load('workoutsData', workoutsData));
-      setDayMeals(await load('dayMeals', {}));
-      setDayWorkouts(await load('dayWorkouts', {}));
-      setCompletedDays(await load('completedDays', []));
-      setMonthlyGoals(await load('monthlyGoals', {}));
-    })();
-    // We intentionally omit dependencies so this runs only once after fonts load.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fontsLoaded]);
+  // Starter data (unchanged)
+  const [mealsData, setMealsData] = useState([
+    { name: 'protein shake', category: 'Breakfast', ingredients: ['protein shake','menthol breeze vape'], favorite: false },
+    { name: 'Honey Butter Bread', category: 'Lunch', ingredients: ['flour','yeast','salt','honey','butter'], favorite: false },
+    { name: 'boy chow', category: 'Dinner', ingredients: ['1 lb beef','onion','rice','franks red hot'], favorite: false },
+  ]);
 
-  // ---- Auto-save whenever specific slices change ----
-  useEffect(() => { save('mealsData', mealsData); }, [mealsData]);
-  useEffect(() => { save('workoutsData', workoutsData); }, [workoutsData]);
-  useEffect(() => { save('dayMeals', dayMeals); }, [dayMeals]);
-  useEffect(() => { save('dayWorkouts', dayWorkouts); }, [dayWorkouts]);
-  useEffect(() => { save('completedDays', completedDays); }, [completedDays]);
-  useEffect(() => { save('monthlyGoals', monthlyGoals); }, [monthlyGoals]);
+  const [workoutsData, setWorkoutsData] = useState([
+    { name: 'Chest Day', type: 'Chest', activities: ['incline bench','incline dumbbell press','dumbbell pull over'], favorite: false },
+  ]);
+
+  const [dayMeals, setDayMeals] = useState({});
+  const [dayWorkouts, setDayWorkouts] = useState({});
+  const [completedDays, setCompletedDays] = useState([]);
+  const [monthlyGoals, setMonthlyGoals] = useState({});
 
   if (!fontsLoaded) return null; // ensure both fonts are ready
 
@@ -103,7 +69,7 @@ export default function App() {
               paddingBottom: 10,
               paddingTop: 6,
             },
-            // Pixel font on tab labels
+            // Pixel font on tab labels (unchanged)
             tabBarLabelStyle: { fontFamily: 'PressStart2P_400Regular', fontSize: 9 },
             tabBarActiveTintColor: '#000',
             tabBarInactiveTintColor: '#444',
