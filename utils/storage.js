@@ -2,20 +2,31 @@
 
 const PREFIX = 'health-tracker:';
 
+function getStore() {
+  if (typeof window !== 'undefined' && window.localStorage) {
+    return window.localStorage;
+  }
+  return null;
+}
+
 export function loadFromStorage(key, fallback) {
   try {
-    const raw = localStorage.getItem(PREFIX + key);
+    const store = getStore();
+    if (!store) return fallback;
+    const raw = store.getItem(PREFIX + key);
     if (raw === null) return fallback;
     return JSON.parse(raw);
-  } catch {
+  } catch (e) {
     return fallback;
   }
 }
 
 export function saveToStorage(key, value) {
   try {
-    localStorage.setItem(PREFIX + key, JSON.stringify(value));
-  } catch {
-    // storage full or unavailable — silently ignore
+    const store = getStore();
+    if (!store) return;
+    store.setItem(PREFIX + key, JSON.stringify(value));
+  } catch (e) {
+    // storage full or unavailable
   }
 }
