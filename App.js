@@ -12,8 +12,19 @@ import { useFonts as useType, SpecialElite_400Regular } from '@expo-google-fonts
 import HomeScreen from './screens/HomeScreen';
 import MealsScreen from './screens/MealsScreen';
 import WorkoutsScreen from './screens/WorkoutsScreen';
+import { loadFromStorage, saveToStorage } from './utils/storage';
 
 const Tab = createBottomTabNavigator();
+
+const DEFAULT_MEALS = [
+  { name: 'protein shake', category: 'Breakfast', ingredients: ['protein shake','menthol breeze vape'], favorite: false },
+  { name: 'Honey Butter Bread', category: 'Lunch', ingredients: ['flour','yeast','salt','honey','butter'], favorite: false },
+  { name: 'boy chow', category: 'Dinner', ingredients: ['1 lb beef','onion','rice','franks red hot'], favorite: false },
+];
+
+const DEFAULT_WORKOUTS = [
+  { name: 'Chest Day', type: 'Chest', activities: ['incline bench','incline dumbbell press','dumbbell pull over'], favorite: false },
+];
 
 export default function App() {
   const [pixelLoaded] = usePixel({ PressStart2P_400Regular });
@@ -37,21 +48,21 @@ export default function App() {
     }
   }, [fontsLoaded]);
 
-  // Starter data (unchanged)
-  const [mealsData, setMealsData] = useState([
-    { name: 'protein shake', category: 'Breakfast', ingredients: ['protein shake','menthol breeze vape'], favorite: false },
-    { name: 'Honey Butter Bread', category: 'Lunch', ingredients: ['flour','yeast','salt','honey','butter'], favorite: false },
-    { name: 'boy chow', category: 'Dinner', ingredients: ['1 lb beef','onion','rice','franks red hot'], favorite: false },
-  ]);
+  // State — initialized from localStorage (falls back to defaults on first run)
+  const [mealsData, setMealsData] = useState(() => loadFromStorage('mealsData', DEFAULT_MEALS));
+  const [workoutsData, setWorkoutsData] = useState(() => loadFromStorage('workoutsData', DEFAULT_WORKOUTS));
+  const [dayMeals, setDayMeals] = useState(() => loadFromStorage('dayMeals', {}));
+  const [dayWorkouts, setDayWorkouts] = useState(() => loadFromStorage('dayWorkouts', {}));
+  const [completedDays, setCompletedDays] = useState(() => loadFromStorage('completedDays', []));
+  const [monthlyGoals, setMonthlyGoals] = useState(() => loadFromStorage('monthlyGoals', {}));
 
-  const [workoutsData, setWorkoutsData] = useState([
-    { name: 'Chest Day', type: 'Chest', activities: ['incline bench','incline dumbbell press','dumbbell pull over'], favorite: false },
-  ]);
-
-  const [dayMeals, setDayMeals] = useState({});
-  const [dayWorkouts, setDayWorkouts] = useState({});
-  const [completedDays, setCompletedDays] = useState([]);
-  const [monthlyGoals, setMonthlyGoals] = useState({});
+  // Persist every state change to localStorage
+  useEffect(() => { saveToStorage('mealsData', mealsData); }, [mealsData]);
+  useEffect(() => { saveToStorage('workoutsData', workoutsData); }, [workoutsData]);
+  useEffect(() => { saveToStorage('dayMeals', dayMeals); }, [dayMeals]);
+  useEffect(() => { saveToStorage('dayWorkouts', dayWorkouts); }, [dayWorkouts]);
+  useEffect(() => { saveToStorage('completedDays', completedDays); }, [completedDays]);
+  useEffect(() => { saveToStorage('monthlyGoals', monthlyGoals); }, [monthlyGoals]);
 
   if (!fontsLoaded) return null; // ensure both fonts are ready
 
