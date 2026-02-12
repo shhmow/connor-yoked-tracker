@@ -6,8 +6,8 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "predeploy": "npx expo export --platform web",
-    "deploy": "gh-pages -d dist"
+    "predeploy": "npx expo export --platform web && echo '!node_modules/' > dist/.gitignore && sed -i '' 's|src=\"/|src=\"/connor-yoked-tracker/|g;s|href=\"/|href=\"/connor-yoked-tracker/|g' dist/index.html && sed -i '' 's|\"/assets/|\"/connor-yoked-tracker/assets/|g' dist/_expo/static/js/web/*.js",
+    "deploy": "gh-pages -d dist --nojekyll --dotfiles --no-history"
   },
   "dependencies": {
     "@expo-google-fonts/press-start-2p": "*",
